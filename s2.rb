@@ -5,9 +5,9 @@ require 'uri'
 require 'json'
 require 'digest/sha2'
 
-$host = '192.168.56.2:3131'
+#$host = '192.168.56.2:3131'
+$host = 'localhost:3131'
 $userauth = {"user" => "hoge", "password" => "fuga"}
-
 
 class SensorData
   @httpSession = nil
@@ -23,8 +23,10 @@ class SensorData
     response = http.request(request)
     case response
     when Net::HTTPSuccess, Net::HTTPRedirection
-      @httpSession = response.header['Set-Cookie'].split(',').join(';')
-      p @httpSession
+      if response.body == "OK"
+        @httpSession = response.header['Set-Cookie'].split(',').join(';')
+        p @httpSession
+      end
     else
       p response
     end
@@ -33,14 +35,14 @@ class SensorData
   def getJson(api)
     uri = URI.parse('http://' + $host + api)
     http = Net::HTTP.new(uri.host, uri.port, nil)
-    response = http.get(uri.path, {'Cookie' => @httpSession})
+    response = http.get(uri, {'Cookie' => @httpSession})
     p response
     response
   end
 
   def getGeteway(&block)
     doLogin()
-    data = getJson('/api/geteway')
+    data = getJson('/api/gateway')
     block.call(data)
   end
 end
