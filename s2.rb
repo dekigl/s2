@@ -24,11 +24,9 @@ class SensorData
     case response
     when Net::HTTPSuccess, Net::HTTPRedirection
       if response.body == "OK"
-        @httpSession = response.header['Set-Cookie'].split(',').join(';')
-        p @httpSession
+        #@httpSession = response.header['Set-Cookie'].split(',').join(';')
+        @httpSession = response.header['Set-Cookie']
       end
-    else
-      p response
     end
   end
 
@@ -36,12 +34,15 @@ class SensorData
     uri = URI.parse('http://' + $host + api)
     http = Net::HTTP.new(uri.host, uri.port, nil)
     response = http.get(uri, {'Cookie' => @httpSession})
-    p response
-    response
+    JSON.parse(response.body)
   end
 
   def getGeteway(&block)
     doLogin()
+    if @httpSession == nil
+      p "login failed"
+      return
+    end
     data = getJson('/api/gateway')
     block.call(data)
   end
@@ -50,5 +51,8 @@ end
 sensor = SensorData.new()
 
 sensor.getGeteway do |gw|
-  p gw
+  gw.each do |gwid, value|
+    p gwid
+    p value
+  end
 end
