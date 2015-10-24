@@ -47,15 +47,15 @@ class ServerAccess
     doLogin()
     
     uri = URI.parse('http://' + $host + api)
-    request = Net::HTTP::Post.new(uri.path)
-    request.body = data.to_json
-    request["Content-Type"] = "application/json"
     http = Net::HTTP.new(uri.host, uri.port, nil)
-    response = http.request(request)
+    headers = {
+      'Cookie' => @httpSession,
+      'Content-Type' => "application/json"
+    }
+    response = http.post(uri, data.to_json, headers)
     case response
     when Net::HTTPSuccess, Net::HTTPRedirection
-      if response.body == "OK"
-      end
+      response.body
     end
   end
 end
