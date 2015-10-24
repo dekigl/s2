@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "./serveraccess"
+require_relative "serveraccess"
 
 server = ServerAccess.new();
 gw = server.getData('/api/gateway')
