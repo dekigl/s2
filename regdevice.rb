@@ -4,7 +4,7 @@ require_relative "serveraccess"
 
 server = ServerAccess.new();
 
-huid_hash = {'hardware_uid' => '0013a2004066cccf',
+huid_hash = {'hardware_uid' => 'gateway0001',
              'class_group_code' => '0x00',
              'class_code' => '0x00',
              'properties' => [
